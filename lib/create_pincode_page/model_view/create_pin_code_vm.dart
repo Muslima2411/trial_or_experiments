@@ -12,7 +12,7 @@ class CreatePinCodeVM extends ChangeNotifier {
     '7',
     '8',
     '9',
-    'CE',
+    '',
     '0',
     '',
   ];
@@ -50,7 +50,10 @@ class CreatePinCodeVM extends ChangeNotifier {
       notifyListeners();
     }
 
-    if (storeCode.isNotEmpty && checkConfirm.isEmpty && code.length == 4 && code == storeCode) {
+    if (storeCode.isNotEmpty &&
+        checkConfirm.isEmpty &&
+        code.length == 4 &&
+        code == storeCode) {
       isTrue = true;
       notifyListeners();
       await writeConfirmCode();
@@ -64,7 +67,9 @@ class CreatePinCodeVM extends ChangeNotifier {
     if (code == storeCode && checkConfirm == 'true' && code.length == 4) {
       isTrue = true;
       notifyListeners();
-    } else if (code.length == 4 && code != storeCode && checkConfirm == "true") {
+    } else if (code.length == 4 &&
+        code != storeCode &&
+        checkConfirm == "true") {
       incorrect = true;
       notifyListeners();
       await Future.delayed(const Duration(milliseconds: 100), () {

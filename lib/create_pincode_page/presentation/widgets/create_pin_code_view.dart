@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:trial_or_experiments/images.dart';
 import 'package:trial_or_experiments/main.dart';
 import '../page/create_pin_code_page.dart';
+import "package:flutter_svg/svg.dart";
 
 class NumberButton extends ConsumerWidget {
   final int index;
@@ -9,70 +11,98 @@ class NumberButton extends ConsumerWidget {
   const NumberButton({super.key, required this.index});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => GestureDetector(
-        onTap: () {
-          if (index != 9) {
-            ref.read(pinNotifier).onTabFunction(index);
-            ref.read(pinNotifier).storePinCode(context);
-            if (ref.read(pinNotifier).isTrue) {
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                      builder: (c) => const MyHomePage(title: "MyHomePage")),
-                  (route) => false);
-            }
-          } else {
-            ref.read(pinNotifier).onTapCEButton();
+  Widget build(BuildContext context, WidgetRef ref) => MaterialButton(
+        onPressed: () {
+          ref.read(pinNotifier).onTabFunction(index);
+          ref.read(pinNotifier).storePinCode(context);
+          if (ref.read(pinNotifier).isTrue) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (c) => const MyHomePage(title: "MyHomePage"),
+              ),
+              (route) => false,
+            );
           }
         },
-        child: Container(
-          alignment: Alignment.center,
-          // height: 70,
-          // width: 40,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            // borderRadius: BorderRadius.circular(15),
-            border: Border.all(
-              color: index != ref.read(pinNotifier).topIndex
-                  ? Colors.grey.shade300
-                  : Colors.green,
-              width: 0.5,
-            ),
-          ),
-          child: Text(
-            ref.read(pinNotifier).numbers[index],
-            style: const TextStyle(
-              fontSize: 20,
-              color: Colors.black,
-            ),
+        color: Colors.white,
+        shape: Border.all(
+          color: const Color.fromRGBO(234, 234, 234, 1),
+          width: 0.4,
+        ),
+        child: Text(
+          ref.read(pinNotifier).numbers[index],
+          style: const TextStyle(
+            fontSize: 42,
+            fontWeight: FontWeight.w400,
+            color: Colors.black,
           ),
         ),
       );
 }
 
-class DeleteButton extends ConsumerWidget {
-  const DeleteButton({super.key});
+class Button extends StatelessWidget {
+  final SvgPicture icon;
+  final VoidCallback onPressed;
+  const Button({
+    required this.icon,
+    super.key,
+    required this.onPressed,
+  });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(pinNotifier);
+  Widget build(BuildContext context) {
+    return MaterialButton(
+      onPressed: onPressed,
+      color: Colors.white,
+      shape: Border.all(color: Colors.grey.shade300, width: 0.5),
+      child: icon,
+    );
+  }
+}
+
+class DeleteButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  const DeleteButton({super.key, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Button(
+      icon: AppImages.deleteIcon,
+      onPressed: onPressed,
+    );
+  }
+}
+
+class FaceIdButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  const FaceIdButton({super.key, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Button(
+      icon: AppImages.faceId,
+      onPressed: onPressed,
+    );
+  }
+}
+
+class UnderlinedText extends StatelessWidget {
+  final String child;
+  final VoidCallback onTap;
+  const UnderlinedText({super.key, required this.onTap, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        ref.read(pinNotifier).deleteButton();
-      },
-      child: Container(
-        // height: 70,
-        // width: 40,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          // borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.grey.shade300, width: 0.5),
-        ),
-        alignment: Alignment.center,
-        child: const Icon(
-          Icons.backspace_outlined,
-          size: 25,
-          color: Colors.green,
+      onTap: onTap,
+      child: Text(
+        child,
+        style: const TextStyle(
+          color: Color.fromRGBO(73, 73, 73, 1),
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          decoration: TextDecoration.underline,
         ),
       ),
     );

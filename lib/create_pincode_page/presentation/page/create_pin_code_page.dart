@@ -4,26 +4,14 @@ import 'package:trial_or_experiments/images.dart';
 import '../../model_view/create_pin_code_vm.dart';
 import '../widgets/create_pin_code_view.dart';
 
-final pinNotifier = ChangeNotifierProvider((ref) => CreatePinCodeVM());
-
-class CreatePinCodePage extends ConsumerStatefulWidget {
+class CreatePinCodePage extends ConsumerWidget {
   const CreatePinCodePage({super.key});
-
   @override
-  ConsumerState<CreatePinCodePage> createState() => _CreatePinCodePageState();
-}
-
-class _CreatePinCodePageState extends ConsumerState<CreatePinCodePage> {
-  @override
-  void initState() {
-    super.initState();
-    ref.read(pinNotifier).readPinCode();
-    ref.read(pinNotifier).readConfirmCode();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    ref.watch(pinNotifier);
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch<CreatePinCodeVM>(pinCodeVM);
+    final CreatePinCodeVM con = ref.read(pinCodeVM);
+    con.readPinCode();
+    con.readConfirmCode();
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -48,9 +36,9 @@ class _CreatePinCodePageState extends ConsumerState<CreatePinCodePage> {
         child: Column(
           children: [
             SizedBox(
-              child: ref.read(pinNotifier).storeCode.isEmpty
+              child: con.storeCode.isEmpty
                   ? AppImages.lockSetPin
-                  : (ref.read(pinNotifier).checkConfirm.isEmpty
+                  : (con.checkConfirm.isEmpty
                       ? AppImages.lockVerifyPin
                       : AppImages.lockEnterPin),
             ),
@@ -58,16 +46,16 @@ class _CreatePinCodePageState extends ConsumerState<CreatePinCodePage> {
               height: 20,
             ),
             Text(
-              ref.read(pinNotifier).storeCode.isEmpty
+              con.storeCode.isEmpty
                   ? "PIN-kodni o'rnating"
-                  : (ref.read(pinNotifier).checkConfirm.isEmpty
+                  : (con.checkConfirm.isEmpty
                       ? "PIN-kodni takrorlang"
                       : "PIN-kodni kiriting"),
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
             ),
             const SizedBox(height: 35),
             Container(
@@ -82,11 +70,13 @@ class _CreatePinCodePageState extends ConsumerState<CreatePinCodePage> {
                   height: 14,
                   width: 14,
                   decoration: BoxDecoration(
-                    color: index < ref.read(pinNotifier).code.length
+                    color: index < con.code.length && !con.incorrect
                         ? const Color.fromRGBO(
                             0, 186, 119, 1) //rgba(0, 186, 119, 1)
-                        : const Color.fromRGBO(
-                            223, 223, 223, 1), //rgba(223, 223, 223, 1)
+                        : con.incorrect
+                            ? const Color.fromRGBO(251, 75, 71, 1)
+                            : const Color.fromRGBO(
+                                223, 223, 223, 1), //rgba(223, 223, 223, 1)
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:trial_or_experiments/images.dart';
 import 'package:trial_or_experiments/main.dart';
-import '../page/create_pin_code_page.dart';
 import "package:flutter_svg/svg.dart";
+
+import '../../model_view/create_pin_code_vm.dart';
 
 class NumberButton extends ConsumerWidget {
   final int index;
@@ -11,34 +12,37 @@ class NumberButton extends ConsumerWidget {
   const NumberButton({super.key, required this.index});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => MaterialButton(
-        onPressed: () {
-          ref.read(pinNotifier).onTabFunction(index);
-          ref.read(pinNotifier).storePinCode(context);
-          if (ref.read(pinNotifier).isTrue) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (c) => const MyHomePage(title: "MyHomePage"),
-              ),
-              (route) => false,
-            );
-          }
-        },
-        color: Colors.white,
-        shape: Border.all(
-          color: const Color.fromRGBO(234, 234, 234, 1),
-          width: 0.4,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final CreatePinCodeVM con = ref.read(pinCodeVM);
+    return MaterialButton(
+      onPressed: () {
+        con.onTabFunction(index);
+        con.storePinCode(context);
+        if (con.isTrue) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (c) => const MyHomePage(title: "MyHomePage"),
+            ),
+            (route) => false,
+          );
+        }
+      },
+      color: Colors.white,
+      shape: Border.all(
+        color: const Color.fromRGBO(234, 234, 234, 1),
+        width: 0.4,
+      ),
+      child: Text(
+        con.numbers[index],
+        style: const TextStyle(
+          fontSize: 42,
+          fontWeight: FontWeight.w400,
+          color: Colors.black,
         ),
-        child: Text(
-          ref.read(pinNotifier).numbers[index],
-          style: const TextStyle(
-            fontSize: 42,
-            fontWeight: FontWeight.w400,
-            color: Colors.black,
-          ),
-        ),
-      );
+      ),
+    );
+  }
 }
 
 class Button extends StatelessWidget {

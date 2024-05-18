@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+AutoDisposeChangeNotifierProvider<CreatePinCodeVM> pinCodeVM =
+    ChangeNotifierProvider.autoDispose<CreatePinCodeVM>(
+        (ChangeNotifierProviderRef<CreatePinCodeVM> ref) => CreatePinCodeVM());
 
 class CreatePinCodeVM extends ChangeNotifier {
   List<String> numbers = [
@@ -30,13 +35,6 @@ class CreatePinCodeVM extends ChangeNotifier {
       topIndex = index;
       notifyListeners();
     } else {}
-  }
-
-  void onTapCEButton() {
-    code = '';
-    topIndex = null;
-    incorrect = false;
-    notifyListeners();
   }
 
   Future<void> storePinCode(BuildContext context) async {
@@ -72,7 +70,8 @@ class CreatePinCodeVM extends ChangeNotifier {
         checkConfirm == "true") {
       incorrect = true;
       notifyListeners();
-      await Future.delayed(const Duration(milliseconds: 100), () {
+      await Future.delayed(const Duration(seconds: 1), () {
+        incorrect = false;
         code = '';
         notifyListeners();
       });
